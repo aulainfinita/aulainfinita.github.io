@@ -1,0 +1,657 @@
+<title>Examen de álgebra · CBTis 236</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Diseño: una columna central tipo "hoja de examen" sobre fondo ostión; cada pregunta es una caja 2.5D de frente. Una sola apariencia clara (identidad del canal: sin fondos oscuros). */
+:root {
+  color-scheme: light;
+  --ostion: #FBF9F4;
+  --texto: #2B2D31;
+  --secundario: #6B6F76;
+  --acento: #2F6FED;
+  --acento-canto: #1F4FB5;
+  --acento-suave: #EAF0FD;
+  --correcto: #1E8A3A;
+  --correcto-suave: #E7F4EA;
+  --incorrecto: #D64545;
+  --incorrecto-suave: #FBEAEA;
+  --caja: #FFFFFF;
+  --borde: #DDD8CC;
+  --canto: #C3BCAC;
+  --f-titulo: "Poppins", "Segoe UI", system-ui, sans-serif;
+  --f-texto: "Inter", "Segoe UI", system-ui, sans-serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { background: var(--ostion); color: var(--texto); }
+body { font-family: var(--f-texto); font-size: 17px; line-height: 1.5; }
+.pagina { max-width: 760px; margin: 0 auto; padding-block: 24px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 20px; }
+h1, h2, h3 { font-family: var(--f-titulo); text-wrap: balance; margin: 0; line-height: 1.2; }
+h1 { font-size: 2rem; font-weight: 700; }
+h2 { font-size: 1.35rem; font-weight: 600; }
+p { margin: 0; }
+.marca { display: flex; align-items: center; gap: 10px; font-family: var(--f-titulo); font-weight: 600; font-size: .85rem; letter-spacing: .06em; text-transform: uppercase; color: var(--secundario); }
+.marca .punto { width: 10px; height: 10px; border-radius: 50%; background: var(--acento); }
+.caja { background: var(--caja); border: 1.5px solid var(--borde); border-radius: 16px; box-shadow: 0 6px 0 var(--canto); padding: 24px; display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.sub { color: var(--secundario); }
+.reglas { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 520px) { .reglas { grid-template-columns: 1fr; } }
+.reglas li { background: var(--ostion); border: 1px solid var(--borde); border-radius: 10px; padding: 10px 12px; font-size: .95rem; }
+.reglas b { display: block; font-family: var(--f-titulo); font-size: 1.1rem; color: var(--acento); }
+label { font-weight: 600; font-size: .95rem; display: flex; flex-direction: column; gap: 6px; }
+input[type=text] { font: inherit; font-size: 1.1rem; padding: 12px 14px; border: 1.5px solid var(--borde); border-radius: 10px; background: var(--caja); color: var(--texto); width: 100%; }
+input[type=text]:focus { outline: none; border-color: var(--acento); box-shadow: 0 0 0 4px var(--acento-suave); }
+.fila { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.campos { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; }
+@media (max-width: 520px) { .campos { grid-template-columns: 1fr; } h1 { font-size: 1.6rem; } .caja { padding: 18px; } }
+button { font: inherit; cursor: pointer; }
+.btn { font-family: var(--f-titulo); font-weight: 600; font-size: 1rem; border-radius: 12px; padding: 12px 22px; border: 1.5px solid transparent; transition: transform .08s, box-shadow .08s; }
+.btn:active { transform: translateY(3px); }
+.btn:focus-visible { outline: 3px solid var(--acento); outline-offset: 3px; }
+.btn-1 { background: var(--acento); color: #fff; box-shadow: 0 4px 0 var(--acento-canto); }
+.btn-1:active { box-shadow: 0 1px 0 var(--acento-canto); }
+.btn-1:disabled { background: var(--canto); box-shadow: 0 4px 0 #A9A190; cursor: not-allowed; }
+.btn-2 { background: var(--caja); color: var(--texto); border-color: var(--borde); box-shadow: 0 4px 0 var(--canto); }
+.btn-2:active { box-shadow: 0 1px 0 var(--canto); }
+.btn-txt { background: none; border: none; color: var(--acento); font-weight: 600; text-decoration: underline; padding: 4px 0; font-size: .95rem; }
+.error { color: var(--incorrecto); font-weight: 600; font-size: .95rem; }
+/* Barra de avance */
+.avance { display: flex; flex-direction: column; gap: 8px; }
+.avance-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; font-weight: 600; }
+.chip { font-family: var(--f-titulo); font-size: .8rem; letter-spacing: .05em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; background: var(--acento-suave); color: var(--acento-canto); }
+.barra { height: 10px; border-radius: 999px; background: var(--caja); border: 1px solid var(--borde); overflow: hidden; }
+.barra > i { display: block; height: 100%; background: var(--acento); border-radius: 999px; transition: width .3s; }
+/* Pregunta */
+.enunciado { font-size: 1.1rem; font-weight: 500; }
+.frase { font-family: var(--f-titulo); font-size: 1.6rem; font-weight: 600; text-align: center; padding: 18px 12px; background: var(--ostion); border-radius: 12px; border: 1px dashed var(--borde); overflow-x: auto; }
+.frase:empty { display: none; }
+.x { color: var(--acento); font-style: italic; font-weight: 700; }
+.eq { white-space: nowrap; }
+.igual { margin: 0 .15em; }
+.ayuda { font-size: .9rem; color: var(--secundario); }
+.opciones { display: grid; gap: 10px; }
+.opcion { text-align: left; background: var(--caja); border: 1.5px solid var(--borde); border-radius: 12px; padding: 12px 14px; display: flex; gap: 12px; align-items: flex-start; box-shadow: 0 3px 0 var(--canto); color: var(--texto); font-size: 1rem; }
+.opcion .letra { font-family: var(--f-titulo); font-weight: 700; color: var(--secundario); min-width: 1.2em; }
+.opcion[aria-pressed=true] { border-color: var(--acento); background: var(--acento-suave); box-shadow: 0 3px 0 var(--acento); }
+.opcion.bien { border-color: var(--correcto); background: var(--correcto-suave); box-shadow: 0 3px 0 var(--correcto); }
+.opcion.mal { border-color: var(--incorrecto); background: var(--incorrecto-suave); box-shadow: 0 3px 0 var(--incorrecto); }
+.opcion:disabled { cursor: default; }
+.pista { background: #FFF8E6; border: 1.5px solid #F0D58A; border-radius: 12px; padding: 12px 14px; }
+.pista b { font-family: var(--f-titulo); }
+.retro { border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px; border: 1.5px solid; }
+.retro.bien { background: var(--correcto-suave); border-color: var(--correcto); }
+.retro.mal { background: var(--incorrecto-suave); border-color: var(--incorrecto); }
+.retro h3 { font-size: 1.2rem; }
+.retro.bien h3 { color: var(--correcto); }
+.retro.mal h3 { color: var(--incorrecto); }
+.pasos { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.pasos li { background: var(--caja); border-radius: 10px; padding: 10px 12px; border: 1px solid var(--borde); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; }
+.pasos .res { font-family: var(--f-titulo); font-weight: 600; }
+.comp { font-weight: 600; color: var(--correcto); }
+/* Balanza */
+.balanza { width: 100%; max-width: 420px; display: block; margin: 0 auto; }
+.bz-base { fill: var(--canto); } .bz-brazo { fill: var(--secundario); } .bz-eje { fill: var(--texto); }
+.pz-x { fill: var(--acento-suave); stroke: var(--acento); stroke-width: 2; }
+.pz-n { fill: var(--caja); stroke: var(--canto); stroke-width: 2; }
+.pz-t { font: 600 14px var(--f-titulo); fill: var(--texto); text-anchor: middle; }
+.pz-tx { font: 700 italic 20px var(--f-titulo); fill: var(--acento); text-anchor: middle; }
+/* Resultados */
+.boleta { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.dato { background: var(--ostion); border: 1px solid var(--borde); border-radius: 12px; padding: 12px; min-width: 0; }
+.dato span { display: block; font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: var(--secundario); font-weight: 600; }
+.dato strong { font-family: var(--f-titulo); font-size: 1.3rem; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.dato.brilla { border: 2px solid var(--acento); box-shadow: 0 0 0 4px var(--acento-suave), 0 0 18px rgba(47,111,237,.25); background: var(--caja); }
+.dato.brilla strong { color: var(--acento); letter-spacing: .08em; }
+.nota-grande { font-size: 2.4rem !important; }
+.estado { font-size: .95rem; padding: 10px 12px; border-radius: 10px; background: var(--ostion); border: 1px solid var(--borde); }
+.tabla-env { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .95rem; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--borde); vertical-align: top; }
+th { font-family: var(--f-titulo); font-size: .8rem; text-transform: uppercase; letter-spacing: .05em; color: var(--secundario); }
+td.marca-r { font-weight: 700; font-size: 1.1rem; }
+tr.bien td.marca-r { color: var(--correcto); }
+tr.mal td.marca-r { color: var(--incorrecto); }
+tr.mal { background: var(--incorrecto-suave); }
+.imagen-res img { border: 1px solid var(--borde); border-radius: 12px; width: 100%; }
+.demo { font-size: .85rem; color: var(--secundario); border-top: 1px dashed var(--borde); padding-top: 14px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="pagina">
+  <div class="marca"><span class="punto"></span>Aula Infinita · Matemáticas</div>
+
+  <!-- Inicio -->
+  <section id="inicio" class="caja">
+    <div>
+      <h1>Examen de álgebra</h1>
+      <p class="sub">3er grado · CBTis 236</p>
+    </div>
+    <ul class="reglas">
+      <li><b>30 preguntas</b>Lenguaje algebraico, conceptos y ecuaciones.</li>
+      <li><b>1 pista</b>por pregunta. Usarla no baja tu calificación.</li>
+      <li><b>Sin límite</b>de tiempo. Lee con calma.</li>
+      <li><b>Al calificar</b>ves si acertaste y la solución paso a paso.</li>
+    </ul>
+    <div class="campos">
+      <label for="nombre">Nombre completo<input type="text" id="nombre" autocomplete="name" placeholder="Ej. Ana López Pérez"></label>
+      <label for="grupo">Grupo<input type="text" id="grupo" placeholder="Ej. 3A"></label>
+    </div>
+    <p id="err-inicio" class="error" hidden></p>
+    <div class="fila"><button class="btn btn-1" id="btn-comenzar">Comenzar examen</button></div>
+    <p class="demo">Vista previa para el maestro: <button class="btn-txt" id="btn-demo">ver un ejemplo de resultados</button> · <button class="btn-txt" id="btn-ver-verif">verificar un código</button></p>
+  </section>
+
+  <!-- Pregunta -->
+  <section id="examen" hidden>
+    <div class="avance">
+      <div class="avance-top"><span id="num-preg">Pregunta 1 de 30</span><span class="chip" id="chip-sec">Lenguaje algebraico</span></div>
+      <div class="barra"><i id="barra" style="width:0%"></i></div>
+    </div>
+    <div class="caja" style="margin-top:16px">
+      <p class="enunciado" id="enunciado"></p>
+      <div class="frase" id="frase"></div>
+      <div id="dibujo"></div>
+      <div id="zona-resp"></div>
+      <div class="pista" id="pista" hidden></div>
+      <p id="err-resp" class="error" hidden></p>
+      <div class="fila" id="acciones">
+        <button class="btn btn-1" id="btn-calificar">Calificar</button>
+        <button class="btn btn-2" id="btn-pista">Ver pista</button>
+      </div>
+      <div id="retro" hidden></div>
+      <div class="fila"><button class="btn btn-1" id="btn-siguiente" hidden>Siguiente pregunta</button></div>
+    </div>
+  </section>
+
+  <!-- Resultados -->
+  <section id="resultados" hidden>
+    <div class="caja">
+      <div>
+        <h1>Resultados</h1>
+        <p class="sub">Examen de álgebra · 3er grado · CBTis 236</p>
+      </div>
+      <div class="boleta" id="boleta"></div>
+      <p class="estado" id="estado-envio"></p>
+      <div class="fila">
+        <button class="btn btn-1" id="btn-imagen">Guardar imagen de resultados</button>
+      </div>
+      <div class="imagen-res" id="imagen-res" hidden>
+        <p class="ayuda" style="margin-bottom:8px">En celular: mantén presionada la imagen y elige <b>Guardar imagen</b>. En computadora: clic derecho y <b>Guardar imagen como</b>. Después súbela a tu tarea de Classroom. También puedes tomar captura de pantalla.</p>
+        <img id="img-res" alt="Imagen con tus resultados del examen">
+        <p style="margin-top:8px"><a id="link-desc" download="resultados-examen-algebra.png">Descargar imagen</a></p>
+      </div>
+      <h2>Revisión pregunta por pregunta</h2>
+      <div class="tabla-env"><table><thead><tr><th>#</th><th>Pregunta</th><th>Tu respuesta</th><th>Correcta</th><th></th></tr></thead><tbody id="tabla-rev"></tbody></table></div>
+      <p class="demo" id="demo-reset" hidden>Esto es un ejemplo para el maestro. <button class="btn-txt" id="btn-reset">Volver al inicio</button></p>
+    </div>
+  </section>
+
+  <!-- Verificar código (maestro) -->
+  <section id="verificar" class="caja" hidden>
+    <div><h2>Verificar un código</h2><p class="sub">Copia los datos tal como aparecen en la imagen del alumno.</p></div>
+    <div class="campos">
+      <label for="v-nombre">Nombre<input type="text" id="v-nombre"></label>
+      <label for="v-grupo">Grupo<input type="text" id="v-grupo"></label>
+      <label for="v-aciertos">Aciertos (solo el número)<input type="text" id="v-aciertos" inputmode="numeric"></label>
+      <label for="v-fecha">Fecha y hora<input type="text" id="v-fecha" placeholder="19/10/2026 08:45"></label>
+      <label for="v-codigo">Código<input type="text" id="v-codigo"></label>
+    </div>
+    <div class="fila"><button class="btn btn-1" id="btn-verif">Verificar</button><button class="btn btn-2" id="btn-verif-volver">Volver</button></div>
+    <p id="v-res" class="estado" hidden></p>
+  </section>
+</div>
+
+<script>
+// ===== Lógica pura del examen: generación de preguntas, calificación y código =====
+var MENOS = "−";
+function rnd(a, b) { return a + Math.floor(Math.random() * (b - a + 1)); }
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function shuffle(arr) {
+  var a = arr.slice();
+  for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+  return a;
+}
+var MULT = { 2: "doble", 3: "triple", 4: "cuádruple", 5: "quíntuple" };
+var PARTE = { 2: "mitad", 3: "tercera parte", 4: "cuarta parte", 5: "quinta parte" };
+
+// Formato visual: la x siempre con la clase "x"
+var X = '<span class="x">x</span>';
+function kx(k) { return (k === 1 ? "" : k) + X; }
+function num(n) { return n < 0 ? MENOS + Math.abs(n) : String(n); }
+function signo(n) { return n < 0 ? " " + MENOS + " " + Math.abs(n) : " + " + n; }
+function eq(a, b) { return '<span class="eq">' + a + ' <span class="igual">=</span> ' + b + '</span>'; }
+function paso(txt, res) { return { txt: txt, res: res }; }
+
+// ---------- Sección A: lenguaje algebraico ----------
+function A1() { var a = rnd(2, 9);
+  return { sec: "A", tipo: "expr", enunciado: "Escribe en lenguaje algebraico:", frase: "Un número desconocido aumentado en " + a,
+    resp: "x+" + a, respTxt: X + " + " + a,
+    pista: "“Aumentado en” significa sumar. Llama " + X + " al número desconocido.",
+    pasos: [paso("“Un número desconocido” lo llamamos", X), paso("“aumentado en " + a + "” significa sumar " + a, X + " + " + a)] }; }
+function A2() {
+        var b = rnd(4, 9);
+        return {
+            sec: "A", tipo: "expr", enunciado: "Escribe en lenguaje algebraico:", frase: "Un número disminuido en " + b,
+            resp: "x-" + b, respTxt: X + " " + MENOS + " " + b,
+            pista: "“Disminuido en” significa restar. ¿Qué se le resta a " + X + "?",
+            pasos: [paso("“Un número” lo llamamos", X), paso("“disminuido en " + b + "” significa restar " + b, X + " " + MENOS + " " + b)]
+        };
+}
+function A3() { var k = rnd(2, 4);
+  return { sec: "A", tipo: "expr", enunciado: "Escribe en lenguaje algebraico:", frase: "El " + MULT[k] + " de una cantidad desconocida",
+    resp: k + "x", respTxt: kx(k),
+    pista: "“El " + MULT[k] + "” significa multiplicar por " + k + ". El número se escribe pegado a la " + X + ".",
+    pasos: [paso("“Una cantidad desconocida” la llamamos", X), paso("“El " + MULT[k] + "” significa multiplicar por " + k, kx(k))] }; }
+function A4() { var k = rnd(2, 4);
+  return { sec: "A", tipo: "expr", enunciado: "Escribe en lenguaje algebraico (usa / para dividir):", frase: "La " + PARTE[k] + " de un número",
+    resp: "x/" + k, respTxt: X + "/" + k,
+    pista: "“La " + PARTE[k] + "” significa dividir entre " + k + ".",
+    pasos: [paso("“Un número” lo llamamos", X), paso("“La " + PARTE[k] + "” significa dividir entre " + k, X + "/" + k)] }; }
+function A5() { var k = rnd(2, 5), a = rnd(1, 9);
+  return { sec: "A", tipo: "expr", enunciado: "Escribe en lenguaje algebraico:", frase: "El " + MULT[k] + " de un número, aumentado en " + a,
+    resp: k + "x+" + a, respTxt: kx(k) + " + " + a,
+    pista: "Traduce por partes: primero “el " + MULT[k] + " de un número”, después “aumentado en " + a + "”.",
+    pasos: [paso("“El " + MULT[k] + " de un número”", kx(k)), paso("“aumentado en " + a + "” significa sumar " + a, kx(k) + " + " + a)] }; }
+function A6() { var k = rnd(2, 3), a = rnd(1, 9);
+  return { sec: "A", tipo: "expr", enunciado: "Escribe en lenguaje algebraico:", frase: "El " + MULT[k] + " de la suma de un número y " + a,
+    resp: k + "*(x+" + a + ")", respTxt: k + "(" + X + " + " + a + ")",
+    pista: "“La suma de un número y " + a + "” va primero, entre paréntesis. Después se multiplica todo por " + k + ".",
+    pasos: [paso("“La suma de un número y " + a + "”", "(" + X + " + " + a + ")"), paso("“El " + MULT[k] + " de” toda esa suma: multiplicamos por " + k, k + "(" + X + " + " + a + ")")] }; }
+function mc(sec, enunciado, frase, correcta, malas, pista, pasos, dibujo) {
+  return { sec: sec, tipo: "mc", enunciado: enunciado, frase: frase, opciones: shuffle([correcta].concat(malas)), resp: correcta, respTxt: correcta, pista: pista, pasos: pasos, dibujo: dibujo || null };
+}
+function A7() {
+  return mc("A", "¿Qué frase dice lo mismo en lenguaje común?", X + " " + MENOS + " 1",
+    "Un número disminuido en uno (su antecesor)",
+    ["Uno disminuido en un número", "Un número aumentado en uno", "Un número multiplicado por uno"],
+    "El antecesor es el número que va justo antes: el de 8 es 7. El signo " + MENOS + " se lee “disminuido en”.",
+    [paso(X + " es “un número”; " + MENOS + " 1 es “disminuido en uno”", "Un número disminuido en uno")]); }
+function A8() {
+        var a = rnd(3, 7), b = rnd(2, 5);
+        return {
+            sec: "A", tipo: "expr", enunciado: "Simplifica la expresión reduciendo términos semejantes:", frase: a + "x + " + b + "x",
+            resp: (a + b) + "x", respTxt: (a + b) + "x",
+            pista: "Suma los números que acompañan a la misma letra y deja la letra exactamente igual.",
+            pasos: [paso("Sumamos los coeficientes " + a + " y " + b, String(a + b)), paso("Agregamos la letra compartida", (a + b) + "x")]
+        };
+    }
+
+function A9() {
+        var a = rnd(5, 9), b = rnd(2, 4);
+        return {
+            sec: "A", tipo: "expr", enunciado: "Reduce los términos semejantes de la siguiente expresión:", frase: a + "x " + MENOS + " " + b + "x + x",
+            resp: (a - b + 1) + "x", respTxt: (a - b + 1) + "x",
+            pista: "Haz las operaciones de suma y resta con los números. Recuerda que la " + X + " sola equivale a 1" + X + ".",
+            pasos: [paso("Calculamos " + a + " " + MENOS + " " + b + " + 1", String(a - b + 1)), paso("Mantenemos la incógnita", (a - b + 1) + "x")]
+        };
+    }
+function A10() {
+        var k = rnd(2, 4), a = rnd(1, 9);
+        return mc("A", "¿Qué frase dice lo mismo en lenguaje común?", k + "(" + X + " " + MENOS + " " + a + ")",
+            k + " veces la diferencia de un número desconocido y " + a,
+            [k + " veces un número desconocido disminuido en " + a,
+            "La diferencia de " + k + " veces " + a + " y un número",
+            "Un número desconocido disminuido en " + k + " veces " + a],
+            "Divide en partes: primero ubica qué operación hace el paréntesis y luego qué hace el número de afuera.",
+            [paso("(" + X + " " + MENOS + " " + a + ") es", "la diferencia de un número desconocido y " + a), paso("El " + k + " pegado al paréntesis significa", k + " veces esa diferencia")]);
+    }
+// ---------- Sección B: conceptos ----------
+function B1() {
+        var a = rnd(2, 5), b = rnd(2, 5);
+        return mc("B", "En la siguiente expresión matemática, ¿cuáles son los términos semejantes?", a + "x + " + b + "y " + MENOS + " x + " + b,
+            a + "x  y  " + MENOS + "x",
+            [b + "y  y  " + b, a + "x  y  " + b + "y", MENOS + "x  y  " + b],
+            "Los términos semejantes son aquellos que tienen exactamente la misma letra (incógnita) con el mismo exponente.",
+            [paso("Buscamos los términos que comparten la letra x", a + "x  y  " + MENOS + "x")]);
+    }
+function B2() { var a = rnd(2, 9), x = rnd(2, 9), b = rnd(1, Math.min(9, a * x - 1)), c = a * x - b;
+  return mc("B", "En la ecuación de abajo, ¿cuáles son los términos constantes?", eq(kx(a) + " " + MENOS + " " + b, c),
+    MENOS + b + " y " + c, [kx(a) + " y " + c, "Solo " + X, a + " y " + X],
+    "Un término constante es un número sin letra.",
+    [paso(kx(a) + " tiene letra: no es constante", ""), paso("Los términos sin letra son", MENOS + b + " y " + c)]); }
+function balanza(izq, der) {
+  // izq/der: arreglos de piezas {t:"x"|"n"|"caja", v}
+  function pieza(p, i, n, cx) {
+    var w = p.t === "n" ? 30 : 40, x0 = cx - (n * 44) / 2 + i * 44 + 2;
+    if (p.t === "n") return '<g><rect x="' + x0 + '" y="86" width="40" height="30" rx="6" class="pz-n"/><text x="' + (x0 + 20) + '" y="106" class="pz-t">' + p.v + '</text></g>';
+    return '<g><rect x="' + x0 + '" y="76" width="40" height="40" rx="6" class="pz-x"/><text x="' + (x0 + 20) + '" y="102" class="pz-tx">' + p.v + '</text></g>';
+  }
+  var s = '<svg viewBox="0 0 400 190" class="balanza" role="img" aria-label="Balanza equilibrada">';
+  s += '<polygon points="200,128 182,176 218,176" class="bz-base"/><rect x="40" y="118" width="320" height="10" rx="5" class="bz-brazo"/>';
+  s += '<circle cx="200" cy="123" r="7" class="bz-eje"/>';
+  izq.forEach(function (p, i) { s += pieza(p, i, izq.length, 110); });
+  der.forEach(function (p, i) { s += pieza(p, i, der.length, 290); });
+  return s + "</svg>";
+}
+function B3() { var a = rnd(2, 9), c = a + rnd(2, 9);
+  return mc("B", "La balanza está equilibrada: tiene " + X + " + " + a + " de un lado y " + c + " del otro. Si quitas " + a + " del lado izquierdo, ¿qué debes hacer para que siga equilibrada?",
+    eq(X + " + " + a, c), "Quitar " + a + " también del lado derecho",
+    ["Agregar " + a + " al lado derecho", "No hacer nada", "Quitar la " + X],
+    "Una balanza sigue equilibrada si haces lo mismo en los dos lados.",
+    [paso("Quitamos " + a + " en ambos lados", eq(X + " + " + a + " " + MENOS + " " + a, c + " " + MENOS + " " + a)), paso("La balanza sigue equilibrada y queda", eq(X, c - a))],
+    balanza([{ t: "x", v: "x" }, { t: "n", v: a }], [{ t: "n", v: c }])); }
+function B4() { var k = rnd(2, 5), w = rnd(2, 6), tot = k * w, cajas = [];
+  for (var i = 0; i < k; i++) cajas.push({ t: "x", v: "?" });
+  return mc("B", "En la balanza hay " + k + " cajas iguales de un lado y " + tot + " kg del otro. ¿Qué haces en ambos lados para saber cuánto pesa una caja, y cuánto pesa?",
+    eq(kx(k), tot), "Dividir entre " + k + " en ambos lados: " + w + " kg",
+    ["Restar " + k + " en ambos lados: " + (tot - k) + " kg", "Multiplicar por " + k + " en ambos lados: " + (tot * k) + " kg", "Dividir solo el lado derecho: " + w + " cajas"],
+    "Hay " + k + " cajas juntas. ¿Qué operación reparte en " + k + " partes iguales?",
+    [paso("Dividimos entre " + k + " en ambos lados", eq(kx(k) + "/" + k, tot + "/" + k)), paso("Una caja pesa", eq(X, w + " kg"))],
+    balanza(cajas, [{ t: "n", v: tot + " kg" }])); }
+function B5() {
+  return mc("B", "¿Qué significa despejar " + X + "?", "",
+    "Dejar la " + X + " sola en un miembro, aplicando la operación inversa en ambos miembros",
+    ["Sumar todos los números de la ecuación", "Cambiar la " + X + " por cualquier número", "Quitar el signo igual"],
+    "Piensa en la balanza: queremos que la " + X + " quede sola sin desequilibrarla.",
+    [paso("Despejar es dejar la " + X + " sola. Para no desequilibrar, lo que hacemos en un miembro lo hacemos en el otro", "")]); }
+function B6() { var a = rnd(2, 6), b = rnd(1, 9), x = rnd(2, 9), c = a * x + b;
+  return mc("B", "Para resolver la ecuación de abajo, ¿cuál es el primer paso más conveniente?", eq(kx(a) + " + " + b, c),
+    "Restar " + b + " en ambos miembros",
+    ["Dividir entre " + a + " solo el primer miembro", "Sumar " + b + " en ambos miembros", "Multiplicar por " + a + " en ambos miembros"],
+    "Primero se elimina lo que está sumando a " + kx(a) + ". La inversa de sumar es restar.",
+    [paso("El " + b + " está sumando: aplicamos la inversa, restar " + b + " en ambos miembros", eq(kx(a), c - b))]); }
+
+
+ // ---------- Sección C: ecuaciones ----------
+    var PISTA_ECU = "Primero se eliminan sumas y restas y luego multiplicaciones y divisiones aplicando su operación inversa en ambos lados.";
+
+    function ecu(ec, x, pista, pasos, comp) {
+        return { sec: "C", tipo: "num", enunciado: "Encuentra el valor de " + X + ":", frase: ec, resp: x, respTxt: X + " = " + num(x), pista: pista, pasos: pasos, comp: comp };
+    }
+    function C1() { var x = rnd(2, 15), a = rnd(2, 9), c = x + a; return ecu(eq(X + " + " + a, c), x, PISTA_ECU, [paso("Restamos " + a + " en ambos miembros", eq(X + " + " + a + " " + MENOS + " " + a, c + " " + MENOS + " " + a)), paso("Simplificamos", eq(X, x))], x + " + " + a + " = " + c); }
+    function C2() { var x = rnd(2, 15), a = rnd(2, 12), c = x + a; return ecu(eq(a + " + " + X, c), x, PISTA_ECU, [paso("Restamos " + a + " en ambos miembros", eq(a + " + " + X + " " + MENOS + " " + a, c + " " + MENOS + " " + a)), paso("Simplificamos", eq(X, x))], a + " + " + x + " = " + c); }
+    function C3() { var x = rnd(5, 20), a = rnd(2, Math.min(9, x - 1)), c = x - a; return ecu(eq(X + " " + MENOS + " " + a, c), x, PISTA_ECU, [paso("Sumamos " + a + " en ambos miembros", eq(X + " " + MENOS + " " + a + " + " + a, c + " + " + a)), paso("Simplificamos", eq(X, x))], x + " " + MENOS + " " + a + " = " + c); }
+    function C4() { var x = rnd(6, 25), a = rnd(2, Math.min(9, x - 1)), c = x - a; return ecu(eq(c, X + " " + MENOS + " " + a), x, PISTA_ECU, [paso("Sumamos " + a + " en ambos miembros", eq(c + " + " + a, X + " " + MENOS + " " + a + " + " + a)), paso("Simplificamos", eq(x, X))], x + " " + MENOS + " " + a + " = " + c); }
+    function C5() { var x = rnd(2, 10), k = rnd(2, 6), c = k * x; return ecu(eq(kx(k), c), x, PISTA_ECU, [paso("Dividimos entre " + k + " en ambos miembros", eq(kx(k) + "/" + k, c + "/" + k)), paso("Simplificamos", eq(X, x))], k + " × " + x + " = " + c); }
+    function C6() { var x = rnd(2, 12), k = rnd(6, 9), c = k * x; return ecu(eq(kx(k), c), x, PISTA_ECU, [paso("Dividimos entre " + k + " en ambos miembros", eq(kx(k) + "/" + k, c + "/" + k)), paso("Simplificamos", eq(X, x))], k + " × " + x + " = " + c); }
+    function C7() { var k = rnd(2, 5), q = rnd(2, 9), x = k * q; return ecu(eq(X + "/" + k, q), x, PISTA_ECU, [paso("Multiplicamos por " + k + " en ambos miembros", eq("(" + X + "/" + k + ") × " + k, q + " × " + k)), paso("Simplificamos", eq(X, x))], x + "/" + k + " = " + q); }
+    function C8() { var k = rnd(6, 9), q = rnd(2, 9), x = k * q; return ecu(eq(X + "/" + k, q), x, PISTA_ECU, [paso("Multiplicamos por " + k + " en ambos miembros", eq("(" + X + "/" + k + ") × " + k, q + " × " + k)), paso("Simplificamos", eq(X, x))], x + "/" + k + " = " + q); }
+    function dosPasos(x, k, b) { var c = k * x + b; return [eq(kx(k) + " + " + b, num(c)), [paso("1) Restamos " + b + " en ambos miembros", eq(kx(k), num(c) + " " + MENOS + " " + b + " = " + num(c - b))), paso("2) Dividimos entre " + k + " en ambos miembros", eq(X, num(c - b) + "/" + k + " = " + num(x)))], k + " × " + (x < 0 ? "(" + num(x) + ")" : x) + " + " + b + " = " + num(c)]; }
+    function C9() { var x = rnd(2, 10), k = rnd(2, 6), b = rnd(1, 9), d = dosPasos(x, k, b); return ecu(d[0], x, PISTA_ECU, d[1], d[2]); }
+    function C10() { var x = -rnd(1, 5), k = rnd(2, 5), b = k * Math.abs(x) + rnd(1, 9), d = dosPasos(x, k, b); return ecu(d[0], x, PISTA_ECU, d[1], d[2]); }
+
+    function C11() {
+        var x = rnd(1, 10), k = rnd(2, 5), a = rnd(1, 6), c = k * (x + a);
+        return mc("C", "Resuelve la siguiente ecuación encontrando el valor de " + X + ":", eq(k + "(" + X + " + " + a + ")", c),
+            "x = " + x, ["x = " + (x + 2), "x = " + (x - 1 || -2), "x = " + Math.abs(x - 3 || 4)],
+            "Aplica distributiva para quitar paréntesis. Luego, " + PISTA_ECU.toLowerCase(),
+            [paso("1) Distributiva: " + k + " por cada término", eq(kx(k) + " + " + (k * a), c)),
+            paso("2) Operación inversa del " + (k * a), eq(kx(k), c - k * a)),
+            paso("3) Dividimos entre " + k, eq(X, x))]);
+    }
+
+    function C12() {
+        var x = rnd(3, 12), k = rnd(2, 5), a = rnd(1, Math.min(6, x - 1)), c = k * (x - a);
+        return mc("C", "Resuelve la siguiente ecuación encontrando el valor de " + X + ":", eq(k + "(" + X + " " + MENOS + " " + a + ")", c),
+            "x = " + x, ["x = " + (x + 1), "x = " + (x - 2 === 0 ? 5 : x - 2), "x = " + Math.abs(x - 4 || 1)],
+            "Aplica distributiva para quitar paréntesis. Luego, " + PISTA_ECU.toLowerCase(),
+            [paso("1) Distributiva: " + k + " por cada término", eq(kx(k) + " " + MENOS + " " + (k * a), c)),
+            paso("2) Operación inversa del " + MENOS + (k * a), eq(kx(k), c + k * a)),
+            paso("3) Dividimos entre " + k, eq(X, x))]);
+    }
+
+    function C13() {
+        var x, m, k, b, d;
+        do { x = rnd(1, 10); m = rnd(2, 6); k = rnd(m + 1, 7); b = rnd(1, 9); d = (k - m) * x - b; } while (d < 1);
+        var r = k - m;
+        return mc("C", "Resuelve la ecuación con incógnita en ambos lados:", eq(kx(k) + " " + MENOS + " " + b, kx(m) + " + " + d),
+            "x = " + x, ["x = " + (x + 3), "x = " + (x - 2 || 2), "x = " + (x + m)],
+            "Agrupa las x de un lado y los números sin letra del otro aplicando operaciones inversas. Luego despeja.",
+            [paso("1) Agrupamos las x a la izquierda", eq(kx(r) + " " + MENOS + " " + b, d)),
+            paso("2) Agrupamos los números a la derecha", eq(kx(r), d + b)),
+            paso(r === 1 ? "3) La x ya quedó sola" : "3) Despejamos x", eq(X, x))]);
+    }
+
+    function C14() {
+        var x = rnd(1, 10), m = rnd(2, 7), k = rnd(m + 1, 8), a = rnd(1, 9), d = (k - m) * x + a, r = k - m;
+        return mc("C", "Resuelve la ecuación con incógnita en ambos lados:", eq(kx(k) + " + " + a, kx(m) + " + " + d),
+            "x = " + x, ["x = " + (x + 2), "x = " + (x - 1 || 3), "x = " + (x + a)],
+            "Agrupa las x de un lado y los números sin letra del otro aplicando operaciones inversas. Luego despeja.",
+            [paso("1) Agrupamos las x a la izquierda", eq(kx(r) + " + " + a, d)),
+            paso("2) Agrupamos los números a la derecha", eq(kx(r), d - a)),
+            paso(r === 1 ? "3) La x ya quedó sola" : "3) Despejamos x", eq(X, x))]);
+    }
+
+var GENERADORES = [A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, B1, B2, B3, B4, B5, B6, C1, C2, C3, C4, C5, C6, C7, C8, C9, C10, C11, C12, C13, C14];
+var NOMBRES = ["A1","A2","A3","A4","A5","A6","A7","A8","A9","A10","B1","B2","B3","B4","B5","B6","C1","C2","C3","C4","C5","C6","C7","C8","C9","C10","C11","C12","C13","C14"];
+function generarExamen() {
+  return shuffle(GENERADORES.map(function (g, i) { var q = g(); q.id = NOMBRES[i]; return q; }));
+}
+
+// ---------- Calificación ----------
+function normalizar(s) {
+  return String(s).toLowerCase().replace(/[−–—]/g, "-").replace(/[×·]/g, "*").replace(/÷/g, "/").replace(/\s+/g, "").replace(/,/g, ".");
+}
+function aJS(expr) {
+  var e = normalizar(expr);
+  if (!/^[0-9x+\-*/().]+$/.test(e) || e.indexOf("x") < 0) return null;
+  e = e.replace(/(\d|\))(?=[x(])/g, "$1*").replace(/x(?=[\d(x])/g, "x*").replace(/\)(?=\d)/g, ")*");
+  try { var f = new Function("x", '"use strict";return (' + e + ");"); f(1); return f; } catch (err) { return null; }
+}
+function exprEquivalente(alumno, correcta) {
+  var fa = aJS(alumno), fc = aJS(correcta);
+  if (!fa || !fc) return false;
+  var pruebas = [-3, -1.5, 0, 1, 2, 3.7, 7];
+  for (var i = 0; i < pruebas.length; i++) {
+    var va = fa(pruebas[i]), vc = fc(pruebas[i]);
+    if (typeof va !== "number" || !isFinite(va) || Math.abs(va - vc) > 1e-9) return false;
+  }
+  return true;
+}
+function leerNumero(s) {
+  var e = normalizar(s).replace(/^x=/, "");
+  if (!/^-?\d+(\.\d+)?$/.test(e)) return null;
+  return parseFloat(e);
+}
+function calificar(q, resp) {
+  if (q.tipo === "mc") return resp === q.resp;
+  if (q.tipo === "num") { var n = leerNumero(resp); return n !== null && n === q.resp; }
+  return exprEquivalente(resp, q.resp);
+}
+
+// ---------- Código de verificación ----------
+var SAL = "AulaInfinita-CBTis236";
+function codigo(nombre, grupo, aciertos, fecha) {
+  var s = [nombre.trim().toLowerCase().replace(/\s+/g, " "), grupo.trim().toLowerCase().replace(/\s+/g, ""), aciertos, fecha.trim(), SAL].join("|");
+  var h = 2166136261;
+  for (var i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+  var c = h.toString(36).toUpperCase();
+  while (c.length < 6) c = "0" + c;
+  return c.slice(-6);
+}
+
+if (typeof module !== "undefined" && module.exports) module.exports = { generarExamen: generarExamen, calificar: calificar, exprEquivalente: exprEquivalente, leerNumero: leerNumero, codigo: codigo, GENERADORES: GENERADORES };
+
+</script>
+<script>
+// ===== Configuración del envío a Google Forms (se llena cuando Pepe cree el formulario) =====
+var FORM = {
+  url: "",            // ej. https://docs.google.com/forms/d/e/XXXX/formResponse
+  campos: { nombre: "", grupo: "", calificacion: "", aciertos: "", fecha: "", codigo: "" }
+};
+
+var CLAVE = "examen-algebra-cbtis236";
+var est = null; // {nombre, grupo, preguntas, resp[], ok[], pista[], idx, fin, fecha, demo}
+var SECCION = { A: "Lenguaje algebraico", B: "Conceptos", C: "Ecuaciones" };
+function $(id) { return document.getElementById(id); }
+function guardar() { if (est && !est.demo) { try { localStorage.setItem(CLAVE, JSON.stringify(est)); } catch (e) {} } }
+function cargar() { try { var s = localStorage.getItem(CLAVE); return s ? JSON.parse(s) : null; } catch (e) { return null; } }
+function texto(html) { var d = document.createElement("div"); d.innerHTML = html; return d.textContent; }
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+function mostrar(id) { ["inicio", "examen", "resultados", "verificar"].forEach(function (s) { $(s).hidden = s !== id; }); window.scrollTo(0, 0); }
+function fechaHoy() { var d = new Date(), p = function (n) { return (n < 10 ? "0" : "") + n; };
+  return p(d.getDate()) + "/" + p(d.getMonth() + 1) + "/" + d.getFullYear() + " " + p(d.getHours()) + ":" + p(d.getMinutes()); }
+
+// ---------- Inicio ----------
+$("btn-comenzar").onclick = function () {
+  var n = $("nombre").value.trim(), g = $("grupo").value.trim();
+  if (n.split(/\s+/).length < 2) { $("err-inicio").textContent = "Escribe tu nombre completo (nombre y apellido)."; $("err-inicio").hidden = false; return; }
+  if (!g) { $("err-inicio").textContent = "Escribe tu grupo."; $("err-inicio").hidden = false; return; }
+  var qs = generarExamen();
+  est = { nombre: n, grupo: g, preguntas: qs, resp: [], ok: [], pista: [], idx: 0, fin: false };
+  guardar(); mostrar("examen"); pintarPregunta();
+};
+
+// ---------- Pregunta ----------
+var seleccion = null;
+function pintarPregunta() {
+  var i = est.idx, q = est.preguntas[i];
+  $("num-preg").textContent = "Pregunta " + (i + 1) + " de 30";
+  $("chip-sec").textContent = SECCION[q.sec];
+  $("barra").style.width = (i / 30 * 100) + "%";
+  $("enunciado").innerHTML = q.enunciado;
+  $("frase").innerHTML = q.frase;
+  $("dibujo").innerHTML = q.dibujo || "";
+  $("pista").hidden = !est.pista[i]; $("pista").innerHTML = "<b>Pista:</b> " + q.pista;
+  $("btn-pista").hidden = !!est.pista[i];
+  $("err-resp").hidden = true; $("retro").hidden = true; $("btn-siguiente").hidden = true;
+  $("acciones").hidden = false;
+  seleccion = null;
+  var z = $("zona-resp");
+  if (q.tipo === "mc") {
+    z.innerHTML = '<div class="opciones">' + q.opciones.map(function (o, k) {
+      return '<button class="opcion" aria-pressed="false" data-k="' + k + '"><span class="letra">' + "ABCD"[k] + '</span><span>' + o + '</span></button>'; }).join("") + "</div>";
+    Array.prototype.forEach.call(z.querySelectorAll(".opcion"), function (b) {
+      b.onclick = function () { Array.prototype.forEach.call(z.querySelectorAll(".opcion"), function (o) { o.setAttribute("aria-pressed", "false"); });
+        b.setAttribute("aria-pressed", "true"); seleccion = q.opciones[+b.dataset.k]; };
+    });
+  } else {
+    var ej = q.tipo === "num" ? "Escribe solo el número. Ejemplo: 8 o -2" : "Usa la letra x. Ejemplos: 3x + 5, x/2, 2(x + 4)";
+    z.innerHTML = '<label for="resp">Tu respuesta<input type="text" id="resp" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="' + (q.tipo === "num" ? "text" : "text") + '"></label><p class="ayuda">' + ej + "</p>";
+    $("resp").onkeydown = function (e) { if (e.key === "Enter") $("btn-calificar").click(); };
+    setTimeout(function () { try { $("resp").focus(); } catch (e) {} }, 50);
+  }
+  if (est.resp[i] !== undefined) mostrarRetro();
+}
+$("btn-pista").onclick = function () { est.pista[est.idx] = true; $("pista").hidden = false; $("btn-pista").hidden = true; guardar(); };
+$("btn-calificar").onclick = function () {
+  var q = est.preguntas[est.idx], r = q.tipo === "mc" ? seleccion : $("resp").value.trim();
+  if (!r) { $("err-resp").textContent = q.tipo === "mc" ? "Elige una opción." : "Escribe tu respuesta."; $("err-resp").hidden = false; return; }
+  if (q.tipo === "num" && leerNumero(r) === null) { $("err-resp").textContent = "Escribe solo un número, por ejemplo 8 o -2."; $("err-resp").hidden = false; return; }
+  if (q.tipo === "expr" && !/x/i.test(r)) { $("err-resp").textContent = "Tu expresión debe llevar la letra x."; $("err-resp").hidden = false; return; }
+  est.resp[est.idx] = r; est.ok[est.idx] = calificar(q, r); guardar(); mostrarRetro();
+};
+function mostrarRetro() {
+  var i = est.idx, q = est.preguntas[i], ok = est.ok[i], r = est.resp[i];
+  $("acciones").hidden = true; $("err-resp").hidden = true;
+  if (q.tipo === "mc") {
+    Array.prototype.forEach.call(document.querySelectorAll(".opcion"), function (b) { var o = q.opciones[+b.dataset.k]; b.disabled = true;
+      if (o === q.resp) b.classList.add("bien"); else if (o === r) b.classList.add("mal"); });
+  } else { $("resp").value = r; $("resp").disabled = true; }
+  var h = '<div class="retro ' + (ok ? "bien" : "mal") + '"><h3>' + (ok ? "✔ ¡Correcto!" : "✘ Incorrecto") + "</h3>";
+  if (!ok) h += "<p>Tu respuesta: <b>" + (q.tipo === "mc" ? r : esc(r)) + "</b><br>Respuesta correcta: <b>" + q.respTxt + "</b></p>";
+  h += "<p><b>Solución paso a paso</b></p><ol class=\"pasos\">" + q.pasos.map(function (p) { return "<li><span>" + p.txt + '</span><span class="res">' + p.res + "</span></li>"; }).join("") + "</ol>";
+  if (q.comp) h += '<p class="comp">Comprobación: ' + q.comp + " ✔</p>";
+  $("retro").innerHTML = h + "</div>"; $("retro").hidden = false;
+  $("btn-siguiente").hidden = false;
+  $("btn-siguiente").textContent = i === 29 ? "Ver mis resultados" : "Siguiente pregunta";
+}
+$("btn-siguiente").onclick = function () {
+  if (est.idx === 29) { terminar(); return; }
+  est.idx++; guardar(); pintarPregunta(); window.scrollTo(0, 0);
+};
+
+// ---------- Resultados ----------
+function aciertos() { return est.ok.filter(Boolean).length; }
+function terminar() {
+  est.fin = true; est.fecha = est.fecha || fechaHoy(); guardar(); pintarResultados(); enviar();
+}
+function pintarResultados() {
+  mostrar("resultados");
+  var a = aciertos(), cal = (a / 30 * 10).toFixed(1), cod = codigo(est.nombre, est.grupo, a, est.fecha);
+  est.cal = cal; est.cod = cod;
+  $("boleta").innerHTML = [
+    ["Nombre", esc(est.nombre)], ["Grupo", esc(est.grupo)], ["Fecha", est.fecha],
+    ["Aciertos", a + " de 30"], ["Calificación", '<span class="nota-grande">' + cal + "</span>"], ["Pistas usadas", est.pista.filter(Boolean).length + " de 30"]
+  ].map(function (d) { return '<div class="dato"><span>' + d[0] + "</span><strong>" + d[1] + "</strong></div>"; }).join("") +
+    '<div class="dato brilla"><span>Código de verificación</span><strong>' + cod + "</strong></div>";
+  $("tabla-rev").innerHTML = est.preguntas.map(function (q, k) {
+    var ok = est.ok[k], r = q.tipo === "mc" ? est.resp[k] : esc(est.resp[k]);
+    return '<tr class="' + (ok ? "bien" : "mal") + '"><td>' + (k + 1) + "</td><td>" + texto(q.enunciado + " " + q.frase) + "</td><td>" + r + "</td><td>" + q.respTxt + '</td><td class="marca-r">' + (ok ? "✔" : "✘") + "</td></tr>";
+  }).join("");
+  $("demo-reset").hidden = !est.demo;
+  $("imagen-res").hidden = true;
+}
+function enviar() {
+  var e = $("estado-envio");
+  if (est.demo) { e.textContent = "Ejemplo: aquí el alumno verá “Resultados enviados a tu maestro” cuando conectemos el Formulario."; return; }
+  if (!FORM.url) { e.textContent = "Guarda la imagen de tus resultados y súbela a tu tarea de Classroom."; return; }
+  if (est.enviado) { e.textContent = "✔ Tus resultados ya se enviaron a tu maestro."; return; }
+  e.textContent = "Enviando resultados a tu maestro…";
+  var d = new URLSearchParams(), c = FORM.campos;
+  d.append(c.nombre, est.nombre); d.append(c.grupo, est.grupo); d.append(c.calificacion, est.cal);
+  d.append(c.aciertos, aciertos() + "/30"); d.append(c.fecha, est.fecha); d.append(c.codigo, est.cod);
+  fetch(FORM.url, { method: "POST", mode: "no-cors", body: d }).then(function () {
+    est.enviado = true; guardar(); e.textContent = "✔ Tus resultados se enviaron a tu maestro. Guarda también la imagen y súbela a Classroom.";
+  }).catch(function () { e.textContent = "No se pudieron enviar los resultados (revisa tu internet). Guarda la imagen y súbela a Classroom."; });
+}
+
+// ---------- Imagen de resultados ----------
+$("btn-imagen").onclick = function () {
+  var go = function () {
+    var W = 1080, H = 1350, cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+    var g = cv.getContext("2d"), a = aciertos();
+    g.fillStyle = "#FBF9F4"; g.fillRect(0, 0, W, H);
+    function caja(x, y, w, h, r, fill, edge) { g.fillStyle = edge; rr(x, y + 8, w, h, r); g.fill(); g.fillStyle = fill; rr(x, y, w, h, r); g.fill(); g.strokeStyle = "#DDD8CC"; g.lineWidth = 2; rr(x, y, w, h, r); g.stroke(); }
+    function rr(x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+    caja(60, 60, 960, 1210, 28, "#FFFFFF", "#C3BCAC");
+    g.fillStyle = "#2F6FED"; g.beginPath(); g.arc(112, 122, 9, 0, 7); g.fill();
+    g.fillStyle = "#6B6F76"; g.font = "600 26px Poppins, sans-serif"; g.fillText("AULA INFINITA · MATEMÁTICAS", 134, 131);
+    g.fillStyle = "#2B2D31"; g.font = "700 60px Poppins, sans-serif"; g.fillText("Resultados", 100, 220);
+    g.fillStyle = "#6B6F76"; g.font = "500 30px Inter, sans-serif"; g.fillText("Examen de álgebra · 3er grado · CBTis 236", 100, 270);
+    var filas = [["Nombre", est.nombre], ["Grupo", est.grupo], ["Fecha", est.fecha], ["Pistas usadas", est.pista.filter(Boolean).length + " de 30"]];
+    filas.forEach(function (f, k) { var y = 345 + k * 70;
+      g.fillStyle = "#6B6F76"; g.font = "600 24px Inter, sans-serif"; g.fillText(f[0].toUpperCase(), 100, y);
+      g.fillStyle = "#2B2D31"; g.font = "600 34px Poppins, sans-serif"; var t = f[1]; while (g.measureText(t).width > 620 && t.length > 3) t = t.slice(0, -2) + "…"; g.fillText(t, 330, y + 2); });
+    // Calificación
+    caja(100, 640, 420, 200, 22, "#EAF0FD", "#1F4FB5");
+    g.fillStyle = "#1F4FB5"; g.font = "600 24px Inter, sans-serif"; g.fillText("CALIFICACIÓN", 130, 690);
+    g.font = "700 96px Poppins, sans-serif"; g.fillText(est.cal, 130, 800);
+    g.fillStyle = "#2B2D31"; g.font = "600 30px Poppins, sans-serif"; g.fillText(a + " de 30 aciertos", 560, 720);
+    // Código con borde brillante
+    g.save(); g.shadowColor = "rgba(47,111,237,.45)"; g.shadowBlur = 24; g.strokeStyle = "#2F6FED"; g.lineWidth = 4; rr(560, 750, 420, 90, 18); g.stroke(); g.restore();
+    g.fillStyle = "#6B6F76"; g.font = "600 20px Inter, sans-serif"; g.fillText("CÓDIGO", 585, 785);
+    g.fillStyle = "#2F6FED"; g.font = "700 40px Poppins, sans-serif"; g.fillText(est.cod.split("").join(" "), 690, 812);
+    // Cuadrícula de 30
+    g.fillStyle = "#2B2D31"; g.font = "600 28px Poppins, sans-serif"; g.fillText("Pregunta por pregunta", 100, 920);
+    for (var k = 0; k < 30; k++) { var cx = 100 + (k % 10) * 88, cy = 950 + Math.floor(k / 10) * 92, ok = est.ok[k];
+      g.fillStyle = ok ? "#E7F4EA" : "#FBEAEA"; rr(cx, cy, 76, 76, 14); g.fill(); g.strokeStyle = ok ? "#1E8A3A" : "#D64545"; g.lineWidth = 3; rr(cx, cy, 76, 76, 14); g.stroke();
+      g.fillStyle = "#6B6F76"; g.font = "600 18px Inter, sans-serif"; g.fillText(String(k + 1), cx + 8, cy + 24);
+      g.fillStyle = ok ? "#1E8A3A" : "#D64545"; g.font = "700 38px Poppins, sans-serif"; g.fillText(ok ? "✔" : "✘", cx + 26, cy + 60); }
+    var url = cv.toDataURL("image/png");
+    $("img-res").src = url; $("link-desc").href = url; $("imagen-res").hidden = false;
+    $("imagen-res").scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(go); else go();
+};
+
+// ---------- Vista previa del maestro ----------
+$("btn-demo").onclick = function () {
+  var qs = generarExamen(), resp = [], ok = [], pista = [];
+  qs.forEach(function (q, k) { var bien = Math.random() < 0.75; pista.push(Math.random() < 0.3);
+    if (bien) { resp.push(q.tipo === "num" ? String(q.resp) : q.tipo === "expr" ? texto(q.respTxt) : q.resp); ok.push(true); }
+    else { resp.push(q.tipo === "mc" ? q.opciones.filter(function (o) { return o !== q.resp; })[0] : q.tipo === "num" ? String(q.resp + 2) : "x + 1"); ok.push(false); } });
+  est = { nombre: "Alumno de Ejemplo", grupo: "3A", preguntas: qs, resp: resp, ok: ok, pista: pista, idx: 29, fin: true, fecha: fechaHoy(), demo: true };
+  pintarResultados(); enviar();
+};
+$("btn-reset").onclick = function () { est = null; mostrar("inicio"); };
+
+// ---------- Verificar código ----------
+$("btn-ver-verif").onclick = function () { mostrar("verificar"); };
+$("btn-verif-volver").onclick = function () { mostrar(est && est.fin && !est.demo ? "resultados" : "inicio"); };
+$("btn-verif").onclick = function () {
+  var c = codigo($("v-nombre").value, $("v-grupo").value, parseInt($("v-aciertos").value, 10), $("v-fecha").value);
+  var ok = c === $("v-codigo").value.trim().toUpperCase().replace(/\s+/g, "");
+  var r = $("v-res"); r.hidden = false;
+  r.innerHTML = ok ? '<b style="color:var(--correcto)">✔ El código coincide.</b> Los datos no fueron modificados.' : '<b style="color:var(--incorrecto)">✘ El código no coincide.</b> Revisa que copiaste igual nombre, grupo, aciertos y fecha.';
+};
+
+// ---------- Arranque ----------
+(function () {
+  if (location.hash === "#verificar") { mostrar("verificar"); return; }
+  var s = cargar();
+  if (s && s.preguntas && s.preguntas.length === 30) { est = s;
+    if (est.fin) { pintarResultados(); enviar(); } else { mostrar("examen"); pintarPregunta(); } }
+})();
+</script>
