@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consulta tu examen · Aula Infinita</title>
+<link rel="icon" href="img/infi-icono.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="css/estilos.css">
+<style>
+.examen .info { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; }
+.nota { font-family: var(--f-titulo); font-weight: 600; font-size: 1.05rem; color: var(--texto); }
+.nota b { font-size: 1.6rem; letter-spacing: -.02em; }
+</style>
+</head>
+<body>
+<header class="nav">
+  <a class="nav-logo" href="./"><img src="img/infi-icono.svg" alt="">Aula Infinita</a>
+  <nav class="nav-links" aria-label="Secciones">
+    <span class="nav-indicador" aria-hidden="true"></span>
+    <a href="cursos.html">Cursos</a>
+    <a href="videos.html">Videos</a>
+    <a href="examenes.html" aria-current="page">Consulta tu examen</a>
+  </nav>
+  <button class="nav-boton" aria-expanded="false" aria-label="Abrir menú"><span class="barras"></span>Menú</button>
+</header>
+
+<main class="contenedor">
+  <div class="titulo-pagina">
+    <h1>Consulta tu examen</h1>
+    <p class="sub">Preséntalo o vuelve a ver tus resultados. Tu avance se guarda en este dispositivo, así que entra desde el mismo celular o computadora donde lo hiciste.</p>
+  </div>
+  <section class="filas" id="lista-examenes"></section>
+  <footer class="pie"><span>Aula Infinita</span><span>Matemáticas, ciencias y programación</span></footer>
+</main>
+
+<script src="datos/examenes.js"></script>
+<script src="js/menu.js"></script>
+<script src="js/luz-filas.js"></script>
+<script>
+// Lee del navegador el avance guardado de un examen (lo guarda el propio examen)
+function avance(clave) {
+  try { var s = localStorage.getItem(clave); return s ? JSON.parse(s) : null; } catch (e) { return null; }
+}
+var MATERIA = { matematicas: "Matemáticas", ciencias: "Ciencias", programacion: "Programación" };
+document.getElementById("lista-examenes").innerHTML = EXAMENES.map(function (x) {
+  var a = avance(x.clave), estado, detalle, boton;
+  if (a && a.fin) {
+    var aciertos = (a.ok || []).filter(Boolean).length;
+    estado = '<span class="estado bien">Terminado</span>';
+    detalle = '<p class="nota">Promedio <b>' + (aciertos / x.preguntas * 10).toFixed(1) + '</b>, ' + aciertos + ' de ' + x.preguntas + ' aciertos</p>';
+    boton = '<a class="btn btn-1" href="' + x.url + '">Ver mis resultados</a>';
+  } else if (a && a.preguntas) {
+    estado = '<span class="estado">En curso</span>';
+    detalle = '<p class="detalle">Vas en la pregunta ' + ((a.idx || 0) + 1) + ' de ' + x.preguntas + '.</p>';
+    boton = '<a class="btn btn-1" href="' + x.url + '">Continuar</a>';
+  } else {
+    estado = '';
+    detalle = '<p class="detalle">' + x.preguntas + ' preguntas, sin límite de tiempo.</p>';
+    boton = '<a class="btn btn-1" href="' + x.url + '">Comenzar</a>';
+  }
+  return '<article class="fila-item iluminable examen"><div class="texto"><div class="info"><span class="materia ' + x.materia + '">' + MATERIA[x.materia] + '</span>' +
+    '<span class="sub">' + x.grado + '</span>' + estado + '</div><h2>' + x.titulo + '</h2>' + detalle + '</div><div class="fila">' + boton + '</div></article>';
+}).join("");
+</script>
+</body>
+</html>

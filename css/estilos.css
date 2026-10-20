@@ -1,0 +1,120 @@
+/* Estilos compartidos del sitio (portada, cursos, videos y exámenes).
+   Identidad del canal: fondo ostión, Poppins para títulos, Inter para textos,
+   un acento por materia. Lo único llamativo es el ∞ en 3D; todo lo demás es sobrio. */
+:root {
+  color-scheme: light;
+  --ostion: #FBF9F4;
+  --papel: #FFFFFF;
+  --texto: #2B2D31;
+  --secundario: #6B6F76;
+  --linea: #E7E2D7;
+  --borde: #DDD8CC;
+  --canto: #C3BCAC;
+  --correcto: #1E8A3A;
+  --correcto-suave: #E7F4EA;
+  --matematicas: #2F6FED;
+  --ciencias: #F2802E;
+  --programacion: #7B4DE0;
+  --acento: var(--matematicas);
+  --acento-canto: #1F4FB5;
+  --sombra-suave: 0 1px 2px rgba(43, 45, 49, .05), 0 8px 24px -12px rgba(43, 45, 49, .18);
+  --f-titulo: "Poppins", "Segoe UI", system-ui, sans-serif;
+  --f-texto: "Inter", "Segoe UI", system-ui, sans-serif;
+  --ancho: 1120px;
+  --curva: cubic-bezier(.22, 1, .36, 1);
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { background: var(--ostion); }
+body { margin: 0; background: var(--ostion); color: var(--texto); font-family: var(--f-texto); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+h1, h2, h3 { font-family: var(--f-titulo); margin: 0; text-wrap: balance; }
+p { margin: 0; }
+.sub { color: var(--secundario); }
+.contenedor { width: min(100% - 32px, var(--ancho)); margin-inline: auto; }
+
+/* ---------- Menú flotante ---------- */
+.nav { position: sticky; top: 12px; z-index: 50; width: min(100% - 24px, var(--ancho)); margin: 12px auto 0; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 8px 8px 8px 14px; border-radius: 18px; background: rgba(251, 249, 244, .78); border: 1px solid var(--linea); -webkit-backdrop-filter: blur(14px) saturate(1.2); backdrop-filter: blur(14px) saturate(1.2); transition: box-shadow .3s, border-color .3s; }
+.nav.con-sombra { box-shadow: var(--sombra-suave); border-color: var(--borde); }
+.nav-logo { display: flex; align-items: center; gap: 10px; font-family: var(--f-titulo); font-weight: 600; font-size: 1.05rem; text-decoration: none; letter-spacing: -.01em; }
+.nav-logo img { width: 34px; height: 34px; border-radius: 50%; }
+.nav-links { position: relative; display: flex; gap: 2px; }
+.nav-links a { position: relative; z-index: 1; font-family: var(--f-titulo); font-weight: 500; font-size: .95rem; text-decoration: none; padding: 9px 16px; border-radius: 12px; color: var(--secundario); transition: color .25s; }
+.nav-links a:hover, .nav-links a[aria-current=page] { color: var(--texto); }
+/* Indicador que se desliza bajo el enlace señalado */
+.nav-indicador { position: absolute; top: 0; left: 0; height: 100%; border-radius: 12px; background: var(--papel); box-shadow: var(--sombra-suave); opacity: 0; transition: transform .45s var(--curva), width .45s var(--curva), opacity .25s; pointer-events: none; }
+.nav-boton { display: none; font: 600 .95rem var(--f-titulo); color: var(--texto); background: var(--papel); border: 1px solid var(--borde); border-radius: 12px; padding: 8px 14px; cursor: pointer; align-items: center; gap: 8px; }
+.nav-boton .barras { width: 16px; height: 10px; position: relative; }
+.nav-boton .barras::before, .nav-boton .barras::after { content: ""; position: absolute; left: 0; width: 100%; height: 2px; border-radius: 2px; background: currentColor; transition: transform .35s var(--curva), top .35s var(--curva); }
+.nav-boton .barras::before { top: 1px; }
+.nav-boton .barras::after { top: 7px; }
+.nav-boton[aria-expanded=true] .barras::before { top: 4px; transform: rotate(45deg); }
+.nav-boton[aria-expanded=true] .barras::after { top: 4px; transform: rotate(-45deg); }
+
+@media (max-width: 720px) {
+  .nav-boton { display: flex; }
+  .nav-indicador { display: none; }
+  .nav-links { position: absolute; top: calc(100% + 8px); left: 0; right: 0; flex-direction: column; gap: 0; padding: 8px; border-radius: 18px; background: var(--papel); border: 1px solid var(--borde); box-shadow: var(--sombra-suave); opacity: 0; transform: translateY(-8px) scale(.98); transform-origin: top; pointer-events: none; transition: opacity .25s, transform .35s var(--curva); }
+  .nav.abierto .nav-links { opacity: 1; transform: none; pointer-events: auto; }
+  .nav-links a { font-size: 1.15rem; padding: 14px 16px; color: var(--texto); opacity: 0; transform: translateY(6px); transition: opacity .3s, transform .4s var(--curva), background .2s; transition-delay: calc(var(--i, 0) * 50ms); }
+  .nav.abierto .nav-links a { opacity: 1; transform: none; }
+  .nav-links a[aria-current=page] { background: var(--ostion); }
+}
+
+/* ---------- Botones ---------- */
+.btn { display: inline-flex; align-items: center; gap: 10px; font-family: var(--f-titulo); font-weight: 600; font-size: 1rem; border-radius: 14px; padding: 13px 22px; border: 1px solid transparent; text-decoration: none; cursor: pointer; transition: transform .2s var(--curva), box-shadow .2s, background .2s; }
+.btn:active { transform: translateY(2px); }
+.btn-1 { background: var(--texto); color: var(--ostion); box-shadow: 0 10px 24px -12px rgba(43, 45, 49, .6); }
+.btn-1:hover { background: #1D1F22; box-shadow: 0 14px 28px -12px rgba(43, 45, 49, .7); }
+.btn-2 { background: var(--papel); color: var(--texto); border-color: var(--borde); }
+.btn-2:hover { border-color: var(--canto); }
+.btn-desactivado { background: transparent; color: var(--secundario); border-color: var(--linea); cursor: default; }
+.btn-desactivado:active { transform: none; }
+.fila { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+:focus-visible { outline: 3px solid var(--acento); outline-offset: 3px; border-radius: 8px; }
+
+/* ---------- Encabezado de páginas internas ---------- */
+.titulo-pagina { padding: clamp(48px, 9vw, 96px) 0 clamp(24px, 4vw, 40px); display: flex; flex-direction: column; gap: 14px; }
+.titulo-pagina h1 { font-size: clamp(2.6rem, 7vw, 4.6rem); font-weight: 600; letter-spacing: -.035em; line-height: 1; }
+.titulo-pagina p { font-size: 1.15rem; max-width: 52ch; }
+
+/* ---------- Filas: lista de enlaces grandes con luz que sigue al cursor ---------- */
+.filas { border-top: 1px solid var(--linea); }
+.fila-item { --x: 50%; --y: 50%; position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 8px 24px; padding: 28px 8px; border-bottom: 1px solid var(--linea); text-decoration: none; color: var(--texto); isolation: isolate; }
+.fila-item::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: 16px; background: radial-gradient(420px circle at var(--x) var(--y), rgba(255, 255, 255, .95), rgba(255, 255, 255, 0) 70%); opacity: 0; transition: opacity .35s; }
+a.fila-item:hover::before, .fila-item.iluminable:hover::before { opacity: 1; }
+.fila-item h2 { font-size: clamp(1.6rem, 4vw, 2.6rem); font-weight: 600; letter-spacing: -.025em; line-height: 1.1; transition: transform .5s var(--curva); }
+a.fila-item:hover h2 { transform: translateX(8px); }
+.fila-item .detalle { color: var(--secundario); max-width: 46ch; }
+.fila-item .flecha { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; border: 1px solid var(--borde); background: var(--papel); transition: background .3s, color .3s, border-color .3s, transform .45s var(--curva); }
+.fila-item .flecha svg { width: 20px; height: 20px; transition: transform .45s var(--curva); }
+a.fila-item:hover .flecha { background: var(--texto); color: var(--ostion); border-color: var(--texto); }
+a.fila-item:hover .flecha svg { transform: translateX(3px); }
+.fila-item .texto { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+
+/* Marca de materia: punto de color con su nombre */
+.materia { display: inline-flex; align-items: center; gap: 8px; font-size: .9rem; font-weight: 500; color: var(--secundario); }
+.materia::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--color-materia, var(--canto)); box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-materia, var(--canto)) 16%, transparent); }
+.matematicas { --color-materia: var(--matematicas); }
+.ciencias { --color-materia: var(--ciencias); }
+.programacion { --color-materia: var(--programacion); }
+
+/* Estado (terminado, en curso…) */
+.estado { display: inline-flex; align-items: center; gap: 6px; font-size: .85rem; font-weight: 600; padding: 4px 12px; border-radius: 999px; background: var(--papel); border: 1px solid var(--borde); color: var(--secundario); }
+.estado.bien { color: var(--correcto); border-color: color-mix(in srgb, var(--correcto) 40%, transparent); background: var(--correcto-suave); }
+
+/* Mensaje cuando una lista está vacía */
+.vacio { padding: 56px 24px; text-align: center; border: 1px dashed var(--borde); border-radius: 20px; color: var(--secundario); display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.vacio h3 { color: var(--texto); font-size: 1.3rem; }
+
+/* ---------- Pie de página ---------- */
+.pie { margin-top: clamp(64px, 10vw, 120px); padding: 28px 0 40px; border-top: 1px solid var(--linea); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; font-size: .92rem; color: var(--secundario); }
+
+@media (max-width: 640px) {
+  .fila-item { grid-template-columns: 1fr; padding: 24px 4px; }
+  .fila-item .flecha { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+}

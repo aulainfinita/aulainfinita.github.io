@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cursos · Aula Infinita</title>
+<link rel="icon" href="img/infi-icono.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="css/estilos.css">
+<style>
+.curso .info { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; }
+.curso.apagado h2, .curso.apagado .detalle { opacity: .55; }
+</style>
+</head>
+<body>
+<header class="nav">
+  <a class="nav-logo" href="./"><img src="img/infi-icono.svg" alt="">Aula Infinita</a>
+  <nav class="nav-links" aria-label="Secciones">
+    <span class="nav-indicador" aria-hidden="true"></span>
+    <a href="cursos.html" aria-current="page">Cursos</a>
+    <a href="videos.html">Videos</a>
+    <a href="examenes.html">Consulta tu examen</a>
+  </nav>
+  <button class="nav-boton" aria-expanded="false" aria-label="Abrir menú"><span class="barras"></span>Menú</button>
+</header>
+
+<main class="contenedor">
+  <div class="titulo-pagina">
+    <h1>Cursos</h1>
+    <p class="sub">Elige tu curso para ver sus videos o presentar su examen.</p>
+  </div>
+  <section class="filas" id="lista-cursos"></section>
+  <footer class="pie"><span>Aula Infinita</span><span>Matemáticas, ciencias y programación</span></footer>
+</main>
+
+<script src="datos/cursos.js"></script>
+<script src="datos/videos.js"></script>
+<script src="js/menu.js"></script>
+<script src="js/luz-filas.js"></script>
+<script>
+// Una fila por cada curso de datos/cursos.js
+var MATERIA = { matematicas: "Matemáticas", ciencias: "Ciencias", programacion: "Programación" };
+document.getElementById("lista-cursos").innerHTML = CURSOS.map(function (c) {
+  var nVideos = VIDEOS.filter(function (v) { return v.curso === c.id; }).length;
+  var botones = "";
+  if (!c.disponible) botones = '<span class="btn btn-desactivado">Próximamente</span>';
+  else {
+    if (nVideos) botones += '<a class="btn btn-2" href="videos.html?curso=' + c.id + '">Ver videos (' + nVideos + ')</a>';
+    if (c.examen) botones += '<a class="btn btn-1" href="' + c.examen + '">Presentar examen</a>';
+  }
+  return '<article class="fila-item iluminable curso' + (c.disponible ? "" : " apagado") + '">' +
+    '<div class="texto"><div class="info"><span class="materia ' + c.materia + '">' + MATERIA[c.materia] + '</span>' +
+    (c.grado ? '<span class="sub">' + c.grado + '</span>' : '') + '</div>' +
+    '<h2>' + c.titulo + '</h2><p class="detalle">' + c.descripcion + '</p></div>' +
+    '<div class="fila">' + botones + '</div></article>';
+}).join("");
+</script>
+</body>
+</html>

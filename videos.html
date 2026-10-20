@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Videos · Aula Infinita</title>
+<link rel="icon" href="img/infi-icono.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Inter:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="css/estilos.css">
+<style>
+.filtros { display: inline-flex; flex-wrap: wrap; gap: 4px; padding: 4px; border-radius: 14px; background: var(--papel); border: 1px solid var(--linea); margin-bottom: 28px; }
+.filtros button { font: 500 .95rem var(--f-titulo); padding: 8px 16px; border-radius: 10px; border: none; background: none; color: var(--secundario); cursor: pointer; transition: background .25s, color .25s; }
+.filtros button[aria-pressed=true] { background: var(--texto); color: var(--ostion); }
+.rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 40px 28px; }
+.video { display: flex; flex-direction: column; gap: 14px; }
+.marco { position: relative; display: block; width: 100%; aspect-ratio: 16 / 9; padding: 0; border: none; border-radius: 18px; overflow: hidden; cursor: pointer; background: var(--linea); box-shadow: 0 2px 4px rgba(43, 45, 49, .06), 0 22px 40px -24px rgba(43, 45, 49, .45); transition: transform .5s var(--curva), box-shadow .5s var(--curva); }
+.marco:hover { transform: translateY(-4px); box-shadow: 0 2px 4px rgba(43, 45, 49, .06), 0 30px 50px -24px rgba(43, 45, 49, .5); }
+.marco img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--curva); }
+.marco:hover img { transform: scale(1.04); }
+.marco .play { position: absolute; inset: 0; margin: auto; width: 62px; height: 62px; border-radius: 50%; background: rgba(251, 249, 244, .9); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); display: grid; place-items: center; transition: transform .5s var(--curva); }
+.marco:hover .play { transform: scale(1.1); }
+.marco .play::after { content: ""; border-left: 18px solid var(--texto); border-top: 11px solid transparent; border-bottom: 11px solid transparent; margin-left: 5px; }
+.video iframe { width: 100%; aspect-ratio: 16 / 9; border: 0; border-radius: 18px; display: block; box-shadow: 0 22px 40px -24px rgba(43, 45, 49, .45); }
+.video h3 { font-size: 1.15rem; font-weight: 600; letter-spacing: -.01em; }
+</style>
+</head>
+<body>
+<header class="nav">
+  <a class="nav-logo" href="./"><img src="img/infi-icono.svg" alt="">Aula Infinita</a>
+  <nav class="nav-links" aria-label="Secciones">
+    <span class="nav-indicador" aria-hidden="true"></span>
+    <a href="cursos.html">Cursos</a>
+    <a href="videos.html" aria-current="page">Videos</a>
+    <a href="examenes.html">Consulta tu examen</a>
+  </nav>
+  <button class="nav-boton" aria-expanded="false" aria-label="Abrir menú"><span class="barras"></span>Menú</button>
+</header>
+
+<main class="contenedor">
+  <div class="titulo-pagina">
+    <h1>Videos</h1>
+    <p class="sub">Las clases del canal. Toca un video para verlo aquí mismo.</p>
+  </div>
+  <div class="filtros" id="filtros" role="group" aria-label="Filtrar por curso"></div>
+  <section class="rejilla" id="lista-videos"></section>
+  <footer class="pie"><span>Aula Infinita</span><span>Matemáticas, ciencias y programación</span></footer>
+</main>
+
+<script src="datos/cursos.js"></script>
+<script src="datos/videos.js"></script>
+<script src="js/menu.js"></script>
+<script>
+// Saca el identificador de YouTube de un link (youtu.be/ID, watch?v=ID, shorts/ID o el ID solo)
+function idYoutube(link) {
+  var m = String(link).match(/(?:youtu\.be\/|v=|shorts\/|embed\/)([\w-]{11})/);
+  return m ? m[1] : (/^[\w-]{11}$/.test(link) ? link : "");
+}
+var MATERIA = { matematicas: "Matemáticas", ciencias: "Ciencias", programacion: "Programación" };
+var cursoActivo = new URLSearchParams(location.search).get("curso") || "";
+function nombreCurso(id) { var c = CURSOS.filter(function (c) { return c.id === id; })[0]; return c ? c.titulo : ""; }
+
+// Botones para filtrar: "Todos" y uno por cada curso que tenga videos
+function pintarFiltros() {
+  var conVideos = CURSOS.filter(function (c) { return VIDEOS.some(function (v) { return v.curso === c.id; }); });
+  var f = document.getElementById("filtros");
+  f.hidden = conVideos.length < 2;
+  f.innerHTML = [{ id: "", titulo: "Todos" }].concat(conVideos).map(function (c) {
+    return '<button data-curso="' + c.id + '" aria-pressed="' + (c.id === cursoActivo) + '">' + c.titulo + '</button>';
+  }).join("");
+  Array.prototype.forEach.call(f.querySelectorAll("button"), function (b) {
+    b.onclick = function () { cursoActivo = b.dataset.curso; pintarFiltros(); pintarVideos(); };
+  });
+}
+
+// Primero solo la miniatura (carga rápido); al tocarla se cambia por el reproductor
+function pintarVideos() {
+  var lista = VIDEOS.filter(function (v) { return !cursoActivo || v.curso === cursoActivo; });
+  var cont = document.getElementById("lista-videos");
+  if (!lista.length) { cont.innerHTML = '<div class="vacio" style="grid-column: 1 / -1"><h3>Todavía no hay videos aquí</h3><p>Los videos de las clases aparecerán en esta página.</p></div>'; return; }
+  cont.innerHTML = lista.map(function (v) {
+    var id = idYoutube(v.youtube);
+    return '<article class="video"><button class="marco" data-id="' + id + '" aria-label="Reproducir ' + v.titulo + '">' +
+      '<img src="https://i.ytimg.com/vi/' + id + '/hqdefault.jpg" alt="" loading="lazy"><span class="play"></span></button>' +
+      '<span class="materia ' + v.materia + '">' + (nombreCurso(v.curso) || MATERIA[v.materia]) + '</span><h3>' + v.titulo + '</h3></article>';
+  }).join("");
+  Array.prototype.forEach.call(cont.querySelectorAll(".marco"), function (b) {
+    b.onclick = function () {
+      var f = document.createElement("iframe");
+      f.src = "https://www.youtube-nocookie.com/embed/" + b.dataset.id + "?autoplay=1&rel=0";
+      f.title = b.getAttribute("aria-label");
+      f.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+      f.allowFullscreen = true;
+      b.replaceWith(f);
+    };
+  });
+}
+pintarFiltros();
+pintarVideos();
+</script>
+</body>
+</html>
